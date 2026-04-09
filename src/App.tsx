@@ -17,10 +17,66 @@ import {
   UserCircle,
   ChevronRight,
   Search,
-  X
+  X,
+  Cloud,
+  CloudRain,
+  Sun,
+  CloudLightning
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useState, useEffect } from 'react';
+
+const WeatherWidget = () => {
+  const [weather, setWeather] = useState<{ temp: number; code: number } | null>(null);
+  const [dateStr, setDateStr] = useState('');
+
+  useEffect(() => {
+    const now = new Date();
+    const days = ['Chủ nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
+    const day = days[now.getDay()];
+    const date = now.getDate();
+    const month = now.getMonth() + 1;
+    setDateStr(`${day}, ${date}/${month}`);
+
+    const fetchWeather = async () => {
+      try {
+        const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=21.0285&longitude=105.8542&current=temperature_2m,weather_code&timezone=Asia%2FBangkok');
+        const data = await res.json();
+        setWeather({
+          temp: Math.round(data.current.temperature_2m),
+          code: data.current.weather_code
+        });
+      } catch (error) {
+        console.error('Error fetching weather:', error);
+      }
+    };
+    fetchWeather();
+  }, []);
+
+  const getWeatherIcon = (code: number) => {
+    if (code <= 3) return <Sun size={14} className="text-amber-500" />;
+    if (code <= 48) return <Cloud size={14} className="text-slate-400" />;
+    if (code <= 67 || code >= 80) return <CloudRain size={14} className="text-blue-400" />;
+    if (code >= 95) return <CloudLightning size={14} className="text-purple-500" />;
+    return <Cloud size={14} className="text-slate-400" />;
+  };
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0, x: 10 }}
+      animate={{ opacity: 1, x: 0 }}
+      className="flex flex-col items-end text-right"
+    >
+      <div className="flex items-center gap-1.5 bg-white px-2.5 py-1 rounded-full shadow-sm border border-slate-100">
+        {weather ? getWeatherIcon(weather.code) : <div className="w-3 h-3 rounded-full border-2 border-slate-200 border-t-slate-400 animate-spin" />}
+        <span className="text-xs font-bold text-slate-700">
+          {weather ? `${weather.temp}°C` : '--°C'}
+        </span>
+      </div>
+      <span className="text-[10px] text-slate-400 font-medium mt-1 mr-1">{dateStr}</span>
+    </motion.div>
+  );
+};
 
 const Header = () => (
   <header className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl border-b border-slate-100 shadow-sm">
@@ -87,14 +143,13 @@ const HeroSlider = () => {
   );
 };
 
-const CategoryTabs = ({ onTabChange }: { onTabChange: (tab: string) => void }) => {
-  const [activeTab, setActiveTab] = useState('Phụ huynh');
+const CategoryTabs = ({ activeTab, onTabChange, onUrlChange }: { activeTab: string, onTabChange: (tab: string) => void, onUrlChange: (url: string) => void }) => {
   const tabs = ['Phụ huynh', 'Học sinh', 'Giáo viên'];
 
   const handleTabClick = (tab: string) => {
-    setActiveTab(tab);
+    onTabChange(tab);
     if (tab === 'Giáo viên') {
-      onTabChange('https://erp-coral-rho.vercel.app/');
+      onUrlChange('https://erp-coral-rho.vercel.app/');
     }
   };
 
@@ -117,8 +172,8 @@ const CategoryTabs = ({ onTabChange }: { onTabChange: (tab: string) => void }) =
   );
 };
 
-const ActionGrid = ({ onActionClick }: { onActionClick: (url: string) => void }) => {
-  const actions = [
+const ActionGrid = ({ activeTab, onActionClick }: { activeTab: string, onActionClick: (url: string) => void }) => {
+  const parentActions = [
     { 
       icon: <Lightbulb size={22} />, 
       title: 'Tư vấn', 
@@ -153,13 +208,53 @@ const ActionGrid = ({ onActionClick }: { onActionClick: (url: string) => void })
     },
   ];
 
+  const studentActions = [
+    { 
+      icon: <ClipboardCheck size={22} />, 
+      title: 'Canvas LMS', 
+      desc: 'Hệ thống học tập', 
+      color: 'bg-indigo-50 text-indigo-600',
+      url: 'https://4015.instructure.com/login/canvas',
+      external: true
+    },
+    { 
+      icon: <BookOpen size={22} />, 
+      title: 'Nội quy - Quy chế', 
+      desc: 'Nội quy nhà trường', 
+      color: 'bg-rose-50 text-rose-600',
+      url: '#',
+      external: false
+    },
+    { 
+      icon: <MessageCircleQuestion size={22} />, 
+      title: 'Tâm lý học đường', 
+      desc: 'Tư vấn tâm lý học đường', 
+      color: 'bg-amber-50 text-amber-600',
+      url: '#',
+      external: false
+    },
+    { 
+      icon: <Bell size={22} />, 
+      title: 'Thông báo', 
+      desc: 'Thông báo nhà trường', 
+      color: 'bg-emerald-50 text-emerald-600',
+      url: '#',
+      external: false
+    },
+  ];
+
+  const actions = activeTab === 'Học sinh' ? studentActions : parentActions;
+
   const handleClick = (action: typeof actions[0]) => {
+    if (action.url === '#') return;
     if (action.external) {
       window.open(action.url, '_blank');
     } else {
       onActionClick(action.url);
     }
   };
+
+  if (activeTab === 'Giáo viên') return null;
 
   return (
     <section className="grid grid-cols-2 gap-4 px-5">
@@ -305,7 +400,7 @@ const BottomNav = () => {
   const [active, setActive] = useState('Trang chủ');
   const items = [
     { icon: <Home size={22} />, label: 'Trang chủ' },
-    { icon: <BookMarked size={22} />, label: 'Chương trình học' },
+    { icon: <BookMarked size={22} />, label: 'CT học' },
     { icon: <Wallet size={22} />, label: 'Biểu phí' },
     { icon: <MessageCircleQuestion size={22} />, label: 'Hỗ trợ' },
     { icon: <UserCircle size={22} />, label: 'Cá nhân' },
@@ -352,6 +447,7 @@ const BottomNav = () => {
 
 export default function App() {
   const [selectedUrl, setSelectedUrl] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState('Phụ huynh');
   
   const currentHour = new Date().getHours();
   const currentMinute = new Date().getMinutes();
@@ -359,24 +455,25 @@ export default function App() {
   const greeting = isMorning ? 'Chào buổi sáng' : 'Chào buổi chiều';
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-body selection:bg-primary-container/10 max-w-2xl mx-auto shadow-2xl shadow-slate-200">
+    <div className="min-h-screen bg-white flex flex-col font-body selection:bg-primary-container/10 max-w-2xl mx-auto shadow-2xl shadow-slate-200">
       <Header />
       
       <main className="flex-1 overflow-y-auto">
-        <section className="mt-20 px-5 mb-2">
+        <section className="mt-20 px-5 mb-2 flex justify-between items-center">
           <motion.div 
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
           >
-            <span className="text-sm text-slate-900 font-bold">{greeting}</span>
+            <span className="text-sm text-slate-900 font-normal">{greeting}</span>
             <br />
-            <span className="text-sm text-red-500 font-normal">Phụ huynh!</span>
+            <span className="text-sm text-red-500 font-normal">Khách !</span>
           </motion.div>
+          <WeatherWidget />
         </section>
 
         <HeroSlider />
-        <CategoryTabs onTabChange={setSelectedUrl} />
-        <ActionGrid onActionClick={setSelectedUrl} />
+        <CategoryTabs activeTab={activeTab} onTabChange={setActiveTab} onUrlChange={setSelectedUrl} />
+        <ActionGrid activeTab={activeTab} onActionClick={setSelectedUrl} />
         
         <NewsSection onArticleClick={setSelectedUrl} />
       </main>

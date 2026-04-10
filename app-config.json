@@ -1,0 +1,16 @@
+{
+  "app": {
+    "title": "Ngôi Sao Hoàng Mai",
+    "headerTitle": "Ngôi Sao Hoàng Mai",
+    "headerColor": "#ffffff",
+    "textColor": "black",
+    "statusBar": "normal",
+    "actionbar": true,
+    "leftButton": "back"
+  },
+  "listWebviewURLs": [
+    "https://zaloapp-snowy.vercel.app"
+  ],
+  "listSyncJS": [],
+  "listSyncCSS": []
+}

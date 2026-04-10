@@ -79,7 +79,7 @@ const WeatherWidget = () => {
 };
 
 const Header = () => (
-  <header className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl border-b border-slate-100 shadow-sm">
+  <header className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl border-b border-slate-100 shadow-sm pt-safe">
     <div className="flex justify-between items-center pl-[5px] pr-5 h-16 w-full max-w-2xl mx-auto">
       <div className="flex items-center">
         <img 
@@ -455,10 +455,10 @@ export default function App() {
   const greeting = isMorning ? 'Chào buổi sáng' : 'Chào buổi chiều';
 
   return (
-    <div className="min-h-screen bg-white flex flex-col font-body selection:bg-primary-container/10 max-w-2xl mx-auto shadow-2xl shadow-slate-200">
+    <div className="h-screen overflow-hidden bg-white flex flex-col font-body selection:bg-primary-container/10 max-w-2xl mx-auto shadow-2xl shadow-slate-200">
       <Header />
       
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1 overflow-y-auto pb-24">
         <section className="mt-20 px-5 mb-2 flex justify-between items-center">
           <motion.div 
             initial={{ opacity: 0, x: -10 }}

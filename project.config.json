@@ -1,0 +1,7 @@
+{
+  "template": "vite-react",
+  "compiler": "vite",
+  "framework": "react",
+  "distDir": "dist",
+  "miniAppId": "4448185815145312343"
+}

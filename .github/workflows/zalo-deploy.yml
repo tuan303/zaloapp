@@ -1,0 +1,27 @@
+name: Deploy to Zalo Mini App
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: # Cho phép chạy thủ công
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build
+
+      - name: Deploy to Zalo Mini App
+        run: npx zmp-cli deploy --ci --access-token ${{ secrets.ZALO_ACCESS_TOKEN }} --app-id ${{ secrets.ZALO_APP_ID }}

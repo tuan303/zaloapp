@@ -1,5 +1,13 @@
-const FACEBOOK_GRAPH_BASE_URL = 'https://graph.facebook.com/v22.0';
+const FACEBOOK_GRAPH_BASE_URL = 'https://graph.facebook.com/v25.0';
 const DEFAULT_PAGE_PATH = 'ngoisaohoangmai';
+
+const sanitizeEnvValue = value => {
+  if (typeof value !== 'string') {
+    return '';
+  }
+
+  return value.trim();
+};
 
 const formatVietnamDate = value => {
   const parsed = Date.parse(value);
@@ -24,7 +32,7 @@ const truncateText = (value, limit) => {
     return value;
   }
 
-  return `${value.slice(0, limit - 1).trimEnd()}…`;
+  return `${value.slice(0, limit - 3).trimEnd()}...`;
 };
 
 const extractImageFromAttachments = attachments => {
@@ -53,9 +61,17 @@ const extractImageFromAttachments = attachments => {
 
 export async function fetchFacebookPosts(options = {}) {
   const accessToken =
-    options.accessToken || process.env.FACEBOOK_PAGE_ACCESS_TOKEN || process.env.FB_PAGE_ACCESS_TOKEN;
-  const pageId = options.pageId || process.env.FACEBOOK_PAGE_ID || DEFAULT_PAGE_PATH;
-  const pagePath = options.pagePath || process.env.FACEBOOK_PAGE_PATH || DEFAULT_PAGE_PATH;
+    sanitizeEnvValue(options.accessToken) ||
+    sanitizeEnvValue(process.env.FACEBOOK_PAGE_ACCESS_TOKEN) ||
+    sanitizeEnvValue(process.env.FB_PAGE_ACCESS_TOKEN);
+  const pageId =
+    sanitizeEnvValue(options.pageId) ||
+    sanitizeEnvValue(process.env.FACEBOOK_PAGE_ID) ||
+    DEFAULT_PAGE_PATH;
+  const pagePath =
+    sanitizeEnvValue(options.pagePath) ||
+    sanitizeEnvValue(process.env.FACEBOOK_PAGE_PATH) ||
+    DEFAULT_PAGE_PATH;
   const limit = options.limit || 5;
 
   if (!accessToken) {

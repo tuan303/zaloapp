@@ -16,6 +16,8 @@
     "https://tuyensinh.nshn-hm.edu.vn",
     "https://erp-coral-rho.vercel.app",
     "https://erp-nshm.firebaseapp.com",
+    "https://estore-54368.firebaseapp.com",
+    "https://estore-54368.firebasestorage.app",
     "https://zalo.me",
     "https://estore.nshm.vn",
     "https://4015.instructure.com",
@@ -30,6 +32,7 @@
     "https://www.gstatic.com",
     "https://identitytoolkit.googleapis.com",
     "https://securetoken.googleapis.com",
+    "https://firebasestorage.googleapis.com",
     "https://firestore.googleapis.com"
   ],
   "listCSS": [

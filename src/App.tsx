@@ -209,9 +209,8 @@ const WeatherWidget = () => {
 };
 
 const Header = () => (
-  <header className="fixed top-0 z-50 w-full bg-white/84 pt-safe backdrop-blur-2xl">
-    <div className="mx-auto w-full max-w-2xl px-4 py-3">
-      <div className="flex items-center justify-between rounded-[26px] border border-white/90 bg-white/94 px-3 py-2 shadow-[0_16px_38px_rgba(15,23,42,0.08)]">
+  <header className="fixed top-0 z-50 w-full border-b border-slate-100 bg-white/80 pt-safe shadow-sm backdrop-blur-xl">
+    <div className="mx-auto flex h-16 w-full max-w-2xl items-center justify-between pl-[5px] pr-5">
       <div className="flex items-center">
         <img
           src="https://hoangmaistarschool.edu.vn/thongtin/logo.svg"
@@ -235,7 +234,6 @@ const Header = () => (
           <span className="absolute right-2 top-2 h-2 w-2 rounded-full border-2 border-white bg-red-500" />
         </motion.button>
       </div>
-      </div>
     </div>
   </header>
 );
@@ -257,7 +255,7 @@ const HeroSlider = ({onSlideClick}: {onSlideClick: (url: string) => void}) => {
   }, [slides.length]);
 
   return (
-    <section className="relative mt-2 h-48 w-full overflow-hidden rounded-[30px] shadow-[0_20px_40px_rgba(15,23,42,0.12)]">
+    <section className="relative mt-2 h-48 w-full overflow-hidden shadow-sm">
       {slides.map((slide, index) => (
         <div
           key={slide.link}
@@ -302,7 +300,7 @@ const CategoryTabs = ({
   };
 
   return (
-    <nav className="mx-5 mb-4 mt-5 flex rounded-[24px] border border-white/80 bg-white/85 p-1.5 shadow-[0_10px_26px_rgba(15,23,42,0.06)] backdrop-blur-md">
+    <nav className="mx-5 mb-4 mt-4 flex rounded-2xl border border-slate-200/50 bg-slate-100/50 p-1.5">
       {tabs.map(tab => (
         <button
           key={tab}
@@ -1049,16 +1047,23 @@ export default function App() {
   };
 
   return (
-    <div className="mx-auto flex h-screen max-w-2xl flex-col overflow-hidden bg-slate-50 font-body shadow-2xl shadow-slate-200 selection:bg-primary-container/10">
+    <div className="mx-auto flex h-screen max-w-2xl flex-col overflow-hidden bg-white font-body shadow-2xl shadow-slate-200 selection:bg-primary-container/10">
       <Header />
 
-      <main className="app-shell flex-1 overflow-y-auto pb-28">
-        <section className="px-5 pt-[92px]">
-          <motion.div
-            initial={{opacity: 0, y: 10}}
-            animate={{opacity: 1, y: 0}}
-            className="overflow-hidden rounded-[32px] bg-gradient-to-br from-primary-container via-[#e23b53] to-primary px-5 py-5 text-white shadow-[0_20px_50px_rgba(167,0,37,0.22)]"
-          >
+      <main className="flex-1 overflow-y-auto pb-24">
+        <section className="mb-2 mt-20 flex items-center justify-between px-5">
+          <motion.div initial={{opacity: 0, x: -10}} animate={{opacity: 1, x: 0}}>
+            <span className="text-sm font-normal text-slate-900">{greeting}</span>
+            <br />
+            <span className="text-sm font-normal text-red-500">Khách!</span>
+          </motion.div>
+          <WeatherWidget />
+        </section>
+
+        <HeroSlider onSlideClick={redirectToUrl} />
+
+        <section className="hidden">
+          <motion.div initial={{opacity: 0, x: -10}} animate={{opacity: 1, x: 0}}>
             <div className="flex items-start justify-between gap-3">
               <div className="space-y-2">
                 <p className="text-sm font-medium text-white/80">{greeting}</p>
@@ -1084,7 +1089,7 @@ export default function App() {
           </motion.div>
         </section>
 
-        <section className="px-5 pt-4">
+        <section className="hidden">
           <HeroSlider onSlideClick={redirectToUrl} />
         </section>
         <CategoryTabs
